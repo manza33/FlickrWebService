@@ -6,12 +6,14 @@ using FlickrWebService.Models;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using System;
+using System.Net;
+using System.IO;
 
 namespace FlickrWebService.Services
 {
     public class PhotoService
     {
-        private readonly IMongoCollection<BsonDocument> _photobis;
+        //private readonly IMongoCollection<BsonDocument> _photobis;
         private readonly IMongoCollection<Photo> _photo;
 
         private readonly ILogger<PhotoService> _logger;
@@ -23,7 +25,7 @@ namespace FlickrWebService.Services
             var database = client.GetDatabase(settings.DatabaseName);
             _logger = logger;
 
-            _photobis = database.GetCollection<BsonDocument>(settings.PhotosCollectionName);
+            //_photobis = database.GetCollection<BsonDocument>(settings.PhotosCollectionName);
             _photo = database.GetCollection<Photo>(settings.PhotosCollectionName);
 
         }
@@ -102,5 +104,21 @@ namespace FlickrWebService.Services
 
         //    public void Remove(string id) =>
         //        _photo.DeleteOne(photo => photo.Id == id);
+
+
+        public string GetJson(string uri)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+
     }
 }

@@ -23,9 +23,15 @@ namespace FlickrWebService.Controllers
         //    return null;
         //}
 
+        //photos
         [HttpGet]
         public ActionResult<List<Photo>> GetBis() =>
             _photoService.Get();
+
+        //photos/uri
+        [HttpGet("uri")]
+        public ActionResult<string> GetUri() =>
+            _photoService.GetJson("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=8cdc0ed72eb971dfca9b3d3edcdfe764&tags=fourmi&format=json&nojsoncallback=1");
 
         //[HttpGet("photoSearch")]
         //public ActionResult<Photo> GetOnePhoto()
@@ -34,6 +40,7 @@ namespace FlickrWebService.Controllers
         //    return null;
         //}
 
+        //photos?id=50125876112
         [HttpGet("{id}")]
         public ActionResult<Photo> Get(string id)
         {
@@ -47,6 +54,8 @@ namespace FlickrWebService.Controllers
             return photo;
         }
 
+        //Ajoute une photo en dur
+        //photos/photoAdd
         [HttpGet("photoAdd")]
         public ActionResult<Photo> Create()
         {
