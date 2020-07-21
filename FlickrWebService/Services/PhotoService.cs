@@ -29,22 +29,22 @@ namespace FlickrWebService.Services
             _photo = database.GetCollection<jsonPhoto>(settings.PhotosCollectionName);
         }
 
-        public List<jsonPhoto> Get() =>
-            _photo.Find(book => true).ToList();
+        public List<jsonPhoto> GetAllPhotos() =>
+            _photo.Find(photo => true).ToList();
 
         public jsonPhoto GetById(string id) =>
             _photo.Find<jsonPhoto>(photo => photo.id == id).FirstOrDefault();
 
-        public List<string> GetAllUrl()
+        public List<string> GetAllUrls()
         {
-            var listUrl = new List<string>();
+            var listUrls = new List<string>();
             var listPhotos =_photo.Find(book => true).ToList();
 
             foreach (var photo in listPhotos)
             {
-                listUrl.Add($"https://farm{photo.farm}.staticflickr.com/{photo.server}/{photo.id}_{photo.secret}.jpg");
+                listUrls.Add($"https://farm{photo.farm}.staticflickr.com/{photo.server}/{photo.id}_{photo.secret}.jpg");
             }
-            return listUrl;
+            return listUrls;
         }
 
         public jsonPhoto CreateOne(jsonPhoto photo)
@@ -66,19 +66,6 @@ namespace FlickrWebService.Services
             }
         }
 
-        public Rootobject CreateMany(string uri)
-        {
-            var json = GetJson(uri);
-            Rootobject ListPhotos = JsonSerializer.Deserialize<Rootobject>(json);
-
-            foreach (var photo in ListPhotos.photos.photo)
-            {
-                _photo.InsertOne(photo);
-            }
-
-            return ListPhotos;
-        }
-
         public Rootobject CreateManyByTag(string tag)
         {
             var url = $"https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=8cdc0ed72eb971dfca9b3d3edcdfe764&tags={tag}&format=json&nojsoncallback=1";
@@ -93,6 +80,19 @@ namespace FlickrWebService.Services
             return ListPhotos;
         }
     }
+    //public Rootobject CreateMany(string uri)
+    //{
+    //    var json = GetJson(uri);
+    //    Rootobject ListPhotos = JsonSerializer.Deserialize<Rootobject>(json);
+
+    //    foreach (var photo in ListPhotos.photos.photo)
+    //    {
+    //        _photo.InsertOne(photo);
+    //    }
+
+    //    return ListPhotos;
+    //}
+
     //public jsonPhoto CreateBis()
     //{
     //    var photo = new jsonPhoto
