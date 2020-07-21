@@ -11,13 +11,13 @@ using System.IO;
 using static FlickrWebService.Models.JsonPhotos;
 using MongoDB.Bson.IO;
 using System.Text.Json;
+using jsonPhoto = FlickrWebService.Models.JsonPhotos.Photo;
 
 namespace FlickrWebService.Services
 {
     public class PhotoService
     {
-        private readonly IMongoCollection<PhotoF> _photo;
-
+        private readonly IMongoCollection<jsonPhoto> _photo;
         private readonly ILogger<PhotoService> _logger;
 
 
@@ -27,18 +27,19 @@ namespace FlickrWebService.Services
             var database = client.GetDatabase(settings.DatabaseName);
 
             _logger = logger;
-            _photo = database.GetCollection<PhotoF>(settings.PhotosCollectionName);
+            _photo = database.GetCollection<jsonPhoto>(settings.PhotosCollectionName);
         }
 
-        public List<PhotoF> Get() =>
+        public List<jsonPhoto> Get() =>
             _photo.Find(book => true).ToList();
 
-        public PhotoF GetBis(string id) =>
-            _photo.Find<PhotoF>(photo => photo.Id == id).FirstOrDefault();
+        public jsonPhoto GetBis(string id) =>
+            _photo.Find<jsonPhoto>(photo => photo.Id == id).FirstOrDefault();
 
-        public PhotoF CreateBis()
+        public jsonPhoto CreateBis()
         {
-            var photo = new PhotoF
+
+            var photo = new jsonPhoto
             (
                 id: "50117633951",
                 owner: "134761878@N07",
@@ -54,7 +55,7 @@ namespace FlickrWebService.Services
             return photo;
         }
 
-        public PhotoF CreateOne(PhotoF photo)
+        public jsonPhoto CreateOne(jsonPhoto photo)
         {
             _photo.InsertOne(photo);
             return photo;
@@ -80,9 +81,9 @@ namespace FlickrWebService.Services
 
             foreach (var photo in ListPhotos.photos.photo)
             {
-                var phot = new PhotoF
+                var phot = new jsonPhoto
                 (
-                    id: photo.id,
+                    id: photo.Id,
                     owner: photo.owner,
                     secret: photo.secret,
                     server: photo.server,

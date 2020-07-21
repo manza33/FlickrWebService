@@ -3,6 +3,8 @@ using FlickrWebService.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using static FlickrWebService.Models.JsonPhotos;
+using jsonPhoto = FlickrWebService.Models.JsonPhotos.Photo;
+
 
 namespace FlickrWebService.Controllers
 {
@@ -19,12 +21,12 @@ namespace FlickrWebService.Controllers
 
         // photos
         [HttpGet]
-        public ActionResult<List<PhotoF>> GetBis() =>
+        public ActionResult<List<jsonPhoto>> GetBis() =>
             _photoService.Get();
 
         // photos/50125876112
         [HttpGet("{id}")]
-        public ActionResult<PhotoF> Get(string id)
+        public ActionResult<jsonPhoto> Get(string id)
         {
             var photo = _photoService.GetBis(id);
 
@@ -38,7 +40,7 @@ namespace FlickrWebService.Controllers
 
         // photos/addPhoto
         [HttpPost("addPhoto")]
-        public ActionResult<PhotoF> CreateOnePhoto([FromBody] PhotoF photo)
+        public ActionResult<jsonPhoto> CreateOnePhoto([FromBody] jsonPhoto photo)
         {
             _photoService.CreateOne(photo);
             return photo;
@@ -52,10 +54,9 @@ namespace FlickrWebService.Controllers
         // Ajoute une photo en dur
         // photos/photoAdd
         [HttpGet("AddDur")]
-        public ActionResult<PhotoF> Create()
+        public ActionResult<jsonPhoto> Create()
         {
             _photoService.CreateBis();
-
             return null;
         }
     }
