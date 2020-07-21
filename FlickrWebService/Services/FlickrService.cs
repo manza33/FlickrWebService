@@ -63,16 +63,16 @@ isfamily: 0
         }
 
 
-        async Task<Photo> GetPhotoAsync(string ApiUrl)
+        async Task<PhotoF> GetPhotoAsync(string ApiUrl)
         {
             //string ApiUrl = "https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=8cdc0ed72eb971dfca9b3d3edcdfe764&tags=fourmi&format=json&nojsoncallback=1";
 
             HttpClient client = new HttpClient();
-            Photo photo = null;
+            PhotoF photo = null;
             HttpResponseMessage response = await client.GetAsync(ApiUrl);
             if (response.IsSuccessStatusCode)
             {
-                photo = await response.Content.ReadAsAsync<Photo>();
+                photo = await response.Content.ReadAsAsync<PhotoF>();
             }
             return photo;
         }

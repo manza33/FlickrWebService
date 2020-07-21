@@ -27,7 +27,7 @@ namespace FlickrWebService.Controllers
         {
             //string message = "";
             HttpClient client = new HttpClient();
-            Photo photo = null;
+            PhotoF photo = null;
             HttpResponseMessage response = await client.GetAsync(ApiUrl);
             //if (response.IsSuccessStatusCode)
             //{

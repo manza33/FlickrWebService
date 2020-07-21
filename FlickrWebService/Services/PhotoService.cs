@@ -8,13 +8,15 @@ using MongoDB.Bson;
 using System;
 using System.Net;
 using System.IO;
+using static FlickrWebService.Models.JsonPhotos;
+using MongoDB.Bson.IO;
+using System.Text.Json;
 
 namespace FlickrWebService.Services
 {
     public class PhotoService
     {
-        //private readonly IMongoCollection<BsonDocument> _photobis;
-        private readonly IMongoCollection<Photo> _photo;
+        private readonly IMongoCollection<PhotoF> _photo;
 
         private readonly ILogger<PhotoService> _logger;
 
@@ -23,88 +25,40 @@ namespace FlickrWebService.Services
         {
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
+
             _logger = logger;
-
-            //_photobis = database.GetCollection<BsonDocument>(settings.PhotosCollectionName);
-            _photo = database.GetCollection<Photo>(settings.PhotosCollectionName);
-
+            _photo = database.GetCollection<PhotoF>(settings.PhotosCollectionName);
         }
 
-        //public async void Get()
-        //{
-        //    using (IAsyncCursor<BsonDocument> cursor = await _photo.FindAsync(new BsonDocument()))
-        //    {                
-        //        while (await cursor.MoveNextAsync())
-        //        {
-        //            IEnumerable<BsonDocument> batch = cursor.Current;
-        //            foreach (BsonDocument document in batch)
-        //            {
-        //                _logger.LogInformation($"Doc : {document}");
-        //            }
-        //        }
-        //    }
-        //    //var list = _photo.Find(photo => true).ToJson();
-        //    //_logger.LogInformation(list);
-        //    //return list;
-        //}
-
-        public List<Photo> Get() =>
+        public List<PhotoF> Get() =>
             _photo.Find(book => true).ToList();
 
+        public PhotoF GetBis(string id) =>
+            _photo.Find<PhotoF>(photo => photo.Id == id).FirstOrDefault();
 
-        //public async void GetSearch() {
-
-        //    using (IAsyncCursor<BsonDocument> cursor = await _photoBis.FindAsync(new BsonDocument("Owner", "28043554@N06")))
-        //    {
-        //        while (await cursor.MoveNextAsync())
-        //        {
-        //            IEnumerable<BsonDocument> batch = cursor.Current;
-        //            foreach (BsonDocument document in batch)
-        //            {
-        //                _logger.LogInformation($"Doc : {document}");
-        //            }
-        //        }
-        //    }
-
-        //}
-
-        public Photo GetBis(string id) =>
-            _photo.Find<Photo>(photo => photo.Id == id).FirstOrDefault();
-
-
-        //public async void Create()
-        //{
-        //    var document = new BsonDocument
-        //    {
-        //      {"firstname", BsonValue.Create("Peter")},
-        //      {"lastname", new BsonString("Mbanugo")},
-        //      { "subjects", new BsonArray(new[] {"English", "Mathematics", "Physics"}) },
-        //      { "class", "JSS 3" },
-        //      { "age", 45}
-        //    };
-        //    await _photobis.InsertOneAsync(document);
-
-        //    ///return null;
-        //}
-
-
-        public Photo CreateBis()
+        public PhotoF CreateBis()
         {
-            var photo = new Photo
-            (id: "50117633951", owner: "134761878@N07", secret: "f5c26f06d9", server: "65535", farm: 66, title: "camponotus pennsylvanicus", ispublic: 1, isfriend: 0, isfamily: 0);
+            var photo = new PhotoF
+            (
+                id: "50117633951",
+                owner: "134761878@N07",
+                secret: "f5c26f06d9",
+                server: "65535",
+                farm: 66,
+                title: "camponotus pennsylvanicus",
+                ispublic: 1,
+                isfriend: 0,
+                isfamily: 0
+            );
             _photo.InsertOne(photo);
             return photo;
         }
 
-        //    public void Update(string id, Photo photoIn) =>
-        //        _photo.ReplaceOne(photo => photo.Id == id, photoIn);
-
-        //    public void Remove(Photo photoIn) =>
-        //        _photo.DeleteOne(photo => photo.Id == photoIn.Id);
-
-        //    public void Remove(string id) =>
-        //        _photo.DeleteOne(photo => photo.Id == id);
-
+        public PhotoF CreateOne(PhotoF photo)
+        {
+            _photo.InsertOne(photo);
+            return photo;
+        }
 
         public string GetJson(string uri)
         {
@@ -119,6 +73,41 @@ namespace FlickrWebService.Services
             }
         }
 
+        public Rootobject CreateMany(string uri)
+        {
+            var json = GetJson(uri);
+            Rootobject ListPhotos = JsonSerializer.Deserialize<Rootobject>(json);
 
+            foreach (var photo in ListPhotos.photos.photo)
+            {
+                var phot = new PhotoF
+                (
+                    id: photo.id,
+                    owner: photo.owner,
+                    secret: photo.secret,
+                    server: photo.server,
+                    farm: photo.farm,
+                    title: photo.title,
+                    ispublic: photo.ispublic,
+                    isfriend: photo.isfriend,
+                    isfamily: photo.isfamily
+                );
+
+                _photo.InsertOne(phot);
+            }
+
+            return ListPhotos;
+        }
     }
 }
+
+//    public void Update(string id, Photo photoIn) =>
+//        _photo.ReplaceOne(photo => photo.Id == id, photoIn);
+
+//    public void Remove(Photo photoIn) =>
+//        _photo.DeleteOne(photo => photo.Id == photoIn.Id);
+
+//    public void Remove(string id) =>
+//        _photo.DeleteOne(photo => photo.Id == id);
+
+

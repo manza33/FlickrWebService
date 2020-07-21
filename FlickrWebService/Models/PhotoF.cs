@@ -8,9 +8,9 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace FlickrWebService.Models
 {
-    public class Photo
+    public class PhotoF
     {
-        public Photo(string id, string owner, string secret, string server, int farm, string title, int ispublic, int isfriend, int isfamily)
+        public PhotoF(string id, string owner, string secret, string server, int farm, string title, int ispublic, int isfriend, int isfamily)
         {
             Id = id;
             Owner = owner;
@@ -21,6 +21,10 @@ namespace FlickrWebService.Models
             Ispublic = ispublic;
             Isfriend = isfriend;
             Isfamily = isfamily;
+        }
+
+        public PhotoF()
+        {
         }
 
         [BsonId]
