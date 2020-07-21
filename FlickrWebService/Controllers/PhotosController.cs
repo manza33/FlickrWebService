@@ -16,28 +16,41 @@ namespace FlickrWebService.Controllers
             _photoService = photoService;
         }
 
+        //[HttpGet]
+        //public ActionResult<string> Get()
+        //{
+        //    _photoService.Get();
+        //    return null;
+        //}
+
         [HttpGet]
-        public ActionResult<string> Get()
-
-        //public ActionResult<List<Photo>> Get()
-        {
+        public ActionResult<List<Photo>> GetBis() =>
             _photoService.Get();
-            return null;
-        }
 
-        [HttpGet("photoSearch")]
-        public ActionResult<Photo> GetOnePhoto()
+        //[HttpGet("photoSearch")]
+        //public ActionResult<Photo> GetOnePhoto()
+        //{
+        //    _photoService.GetSearch();            
+        //    return null;
+        //}
+
+        [HttpGet("{id}")]
+        public ActionResult<Photo> Get(string id)
         {
-            _photoService.GetSearch();
+            var photo = _photoService.GetBis(id);
 
-            
-            return null;
+            if (photo == null)
+            {
+                return NotFound();
+            }
+
+            return photo;
         }
 
         [HttpGet("photoAdd")]
         public ActionResult<Photo> Create()
         {
-            _photoService.Create();
+            _photoService.CreateBis();
 
             return null;
         }
@@ -51,9 +64,7 @@ namespace FlickrWebService.Controllers
         //    {
         //        return NotFound();
         //    }
-
         //    _photoService.Update(id, PhotoIn);
-
         //    return NoContent();
         //}
 
