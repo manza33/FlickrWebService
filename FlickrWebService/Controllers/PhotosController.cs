@@ -21,20 +21,24 @@ namespace FlickrWebService.Controllers
 
         // photos
         [HttpGet]
-        public ActionResult<List<jsonPhoto>> GetBis() =>
+        public ActionResult<List<jsonPhoto>> Get() =>
             _photoService.Get();
+
+        // photos/urls
+        [HttpGet("urls")]
+        public ActionResult<List<string>> GetByUrl() =>
+            _photoService.GetAllUrl();
 
         // photos/50125876112
         [HttpGet("{id}")]
         public ActionResult<jsonPhoto> Get(string id)
         {
-            var photo = _photoService.GetBis(id);
+            var photo = _photoService.GetById(id);
 
             if (photo == null)
             {
                 return NotFound();
             }
-
             return photo;
         }
 
@@ -51,19 +55,23 @@ namespace FlickrWebService.Controllers
         public ActionResult<Rootobject> CreateManyPhotos() =>
             _photoService.CreateMany("https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=8cdc0ed72eb971dfca9b3d3edcdfe764&tags=fourmi&format=json&nojsoncallback=1");
 
-        // Ajoute une photo en dur
-        // photos/photoAdd
-        [HttpGet("AddDur")]
-        public ActionResult<jsonPhoto> Create()
-        {
-            _photoService.CreateBis();
-            return null;
-        }
+        // photos/addFromJson
+        [HttpGet("addFromJson/{tag}")]
+        public ActionResult<Rootobject> CreateManyPhotos(string tag) =>
+            _photoService.CreateManyByTag(tag);
     }
 }
 
 
 
+// Ajoute une photo en dur
+// photos/photoAdd
+//[HttpGet("AddDur")]
+//public ActionResult<jsonPhoto> Create()
+//{
+//    _photoService.CreateBis();
+//    return null;
+//}
 
 //[HttpGet("photoSearch")]
 //public ActionResult<Photo> GetOnePhoto()

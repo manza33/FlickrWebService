@@ -1,16 +1,7 @@
 ﻿using MongoDB.Driver;
 using System.Collections.Generic;
-using System.Linq;
-using static FlickrWebService.Models.FlickrDatabaseSettings;
-using FlickrWebService.Models;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
-using System;
-using System.Net;
-using System.IO;
-using static FlickrWebService.Models.JsonPhotos;
-using MongoDB.Bson.IO;
-using System.Text.Json;
 
 namespace FlickrWebService.Services
 {

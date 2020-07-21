@@ -29,7 +29,7 @@ namespace FlickrWebService.Models
         {
             public Photo(string id, string owner, string secret, string server, int farm, string title, int ispublic, int isfriend, int isfamily)
             {
-                this.Id = id;
+                this.id = id;
                 this.owner = owner;
                 this.secret = secret;
                 this.server = server;
@@ -48,7 +48,7 @@ namespace FlickrWebService.Models
             [BsonRepresentation(BsonType.ObjectId)]
             public string _id { get; set; }
             [BsonElement("Id")]
-            public string Id { get; set; }
+            public string id { get; set; }
             [BsonElement("Owner")]
             public string owner { get; set; }
             [BsonElement("Secret")]

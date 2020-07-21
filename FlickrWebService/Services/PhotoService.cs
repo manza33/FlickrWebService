@@ -20,7 +20,6 @@ namespace FlickrWebService.Services
         private readonly IMongoCollection<jsonPhoto> _photo;
         private readonly ILogger<PhotoService> _logger;
 
-
         public PhotoService(Models.FlickrDatabaseSettings settings, ILogger<PhotoService> logger)
         {
             var client = new MongoClient(settings.ConnectionString);
@@ -33,26 +32,19 @@ namespace FlickrWebService.Services
         public List<jsonPhoto> Get() =>
             _photo.Find(book => true).ToList();
 
-        public jsonPhoto GetBis(string id) =>
-            _photo.Find<jsonPhoto>(photo => photo.Id == id).FirstOrDefault();
+        public jsonPhoto GetById(string id) =>
+            _photo.Find<jsonPhoto>(photo => photo.id == id).FirstOrDefault();
 
-        public jsonPhoto CreateBis()
+        public List<string> GetAllUrl()
         {
+            var listUrl = new List<string>();
+            var listPhotos =_photo.Find(book => true).ToList();
 
-            var photo = new jsonPhoto
-            (
-                id: "50117633951",
-                owner: "134761878@N07",
-                secret: "f5c26f06d9",
-                server: "65535",
-                farm: 66,
-                title: "camponotus pennsylvanicus",
-                ispublic: 1,
-                isfriend: 0,
-                isfamily: 0
-            );
-            _photo.InsertOne(photo);
-            return photo;
+            foreach (var photo in listPhotos)
+            {
+                listUrl.Add($"https://farm{photo.farm}.staticflickr.com/{photo.server}/{photo.id}_{photo.secret}.jpg");
+            }
+            return listUrl;
         }
 
         public jsonPhoto CreateOne(jsonPhoto photo)
@@ -81,25 +73,43 @@ namespace FlickrWebService.Services
 
             foreach (var photo in ListPhotos.photos.photo)
             {
-                var phot = new jsonPhoto
-                (
-                    id: photo.Id,
-                    owner: photo.owner,
-                    secret: photo.secret,
-                    server: photo.server,
-                    farm: photo.farm,
-                    title: photo.title,
-                    ispublic: photo.ispublic,
-                    isfriend: photo.isfriend,
-                    isfamily: photo.isfamily
-                );
+                _photo.InsertOne(photo);
+            }
 
-                _photo.InsertOne(phot);
+            return ListPhotos;
+        }
+
+        public Rootobject CreateManyByTag(string tag)
+        {
+            var url = $"https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=8cdc0ed72eb971dfca9b3d3edcdfe764&tags={tag}&format=json&nojsoncallback=1";
+            var json = GetJson(url);
+            Rootobject ListPhotos = JsonSerializer.Deserialize<Rootobject>(json);
+
+            foreach (var photo in ListPhotos.photos.photo)
+            {
+                _photo.InsertOne(photo);
             }
 
             return ListPhotos;
         }
     }
+    //public jsonPhoto CreateBis()
+    //{
+    //    var photo = new jsonPhoto
+    //    (
+    //        id: "50117633951",
+    //        owner: "134761878@N07",
+    //        secret: "f5c26f06d9",
+    //        server: "65535",
+    //        farm: 66,
+    //        title: "camponotus pennsylvanicus",
+    //        ispublic: 1,
+    //        isfriend: 0,
+    //        isfamily: 0
+    //    );
+    //    _photo.InsertOne(photo);
+    //    return photo;
+    //}
 }
 
 //    public void Update(string id, Photo photoIn) =>
