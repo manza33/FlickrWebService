@@ -68,10 +68,13 @@ namespace FlickrWebService.Services
 
         public Rootobject CreateManyByTag(string tag)
         {
-            var url = $"https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=8cdc0ed72eb971dfca9b3d3edcdfe764&tags={tag}&format=json&nojsoncallback=1";
+            var url = $"https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=10f4f77631339895da490264a15ec85c&tags={tag}&format=json&nojsoncallback=1";
             var json = GetJson(url);
-            Rootobject ListPhotos = JsonSerializer.Deserialize<Rootobject>(json);
+            //_logger.LogInformation(json);
 
+            Rootobject ListPhotos = JsonSerializer.Deserialize<Rootobject>(json); // On récupère toutes les photos
+
+            // TODO find tag  => tag == 0
             foreach (var photo in ListPhotos.photos.photo)
             {
                 _photo.InsertOne(photo);
@@ -80,6 +83,7 @@ namespace FlickrWebService.Services
             return ListPhotos;
         }
     }
+
     //public Rootobject CreateMany(string uri)
     //{
     //    var json = GetJson(uri);
