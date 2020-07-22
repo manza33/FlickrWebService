@@ -49,6 +49,7 @@ namespace FlickrWebService.Services
 
         public jsonPhoto CreateOne(jsonPhoto photo)
         {
+            photo.tag = null;
             _photo.InsertOne(photo);
             return photo;
         }
@@ -68,19 +69,33 @@ namespace FlickrWebService.Services
 
         public Rootobject CreateManyByTag(string tag)
         {
-            var url = $"https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=10f4f77631339895da490264a15ec85c&tags={tag}&format=json&nojsoncallback=1";
-            var json = GetJson(url);
-            //_logger.LogInformation(json);
+            
 
-            Rootobject ListPhotos = JsonSerializer.Deserialize<Rootobject>(json); // On récupère toutes les photos
+            var ListTag = _photo.Find<jsonPhoto>(photo => photo.tag == tag).ToList();
+            _logger.LogInformation($"numberTag : {ListTag.Count}");
 
-            // TODO find tag  => tag == 0
-            foreach (var photo in ListPhotos.photos.photo)
+            if (ListTag.Count() == 0)
             {
-                _photo.InsertOne(photo);
+                var url = $"https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=10f4f77631339895da490264a15ec85c&tags={tag}&format=json&nojsoncallback=1";
+                var json = GetJson(url);
+                //_logger.LogInformation(json);
+
+                Rootobject ListPhotos = JsonSerializer.Deserialize<Rootobject>(json); // On récupère toutes les photos
+                _logger.LogInformation($"Ajout de {ListPhotos.photos.photo.Length} photos dans la collection Photos");
+
+                foreach (var photo in ListPhotos.photos.photo)
+                {
+                    photo.tag = tag;
+                    _photo.InsertOne(photo);
+                }
+                return ListPhotos;
+            }
+            else
+            {
+                _logger.LogInformation($"Tag déjà recherché");
+                return null;
             }
 
-            return ListPhotos;
         }
     }
 

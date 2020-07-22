@@ -65,6 +65,9 @@ namespace FlickrWebService.Models
             public int isfriend { get; set; }
             [BsonElement("Isfamily")]
             public int isfamily { get; set; }
+            [BsonElement("Tag")]
+            public string tag { get; set; }
+
         }
     }
 }

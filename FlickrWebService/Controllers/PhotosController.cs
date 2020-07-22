@@ -50,10 +50,18 @@ namespace FlickrWebService.Controllers
             return photo;
         }
 
-        // photos/addFromJson
+        // photos/addFromJson/panda
         [HttpGet("addFromJson/{tag}")]
-        public ActionResult<Rootobject> CreateManyPhotos(string tag) =>
-            _photoService.CreateManyByTag(tag);
+        public ActionResult<Rootobject> CreateManyPhotos(string tag)
+        {
+            var listPhotosCreated = _photoService.CreateManyByTag(tag);
+
+            if(listPhotosCreated == null){
+                return BadRequest("Recherche déjà effectuée");
+            }
+
+            return listPhotosCreated;
+        }
     }
 }
 
